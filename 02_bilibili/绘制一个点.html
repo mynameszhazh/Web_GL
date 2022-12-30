@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="X-UA-Compatible"
+      content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <canvas
+      id="webgl"
+      width="500"
+      height="500"
+      style="background-color: aqua"></canvas>
+
+    <script>
+      var canvas,
+        gl,
+        vertexShaderSource,
+        fragmentShaderSource,
+        program,
+        pointsLength
+      // 获取canvas画布
+      canvas = document.getElementById('webgl')
+      // 获取 webgl  上下文； webgl API 都在上下文上
+      gl = canvas.getContext('webgl')
+
+      // 设置背景色
+      gl.clearColor(0.9, 0.9, 0.9, 1.0)
+
+      // 顶点着色器
+      vertexShaderSource = `
+                  void main () {
+                      gl_PointSize = 20.0;
+                      gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+                  }
+              `
+
+      // 片元着色器
+      fragmentShaderSource = `
+                  #ifdef GL_ES
+                  precision mediump float;
+                  #endif
+                  void main () {
+                      gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+                  }
+              `
+
+      // 初始化着色器
+      program = initShader()
+
+      // 清空画布
+      gl.clear(gl.COLOR_BUFFER_BIT)
+
+      // 开始绘制
+      gl.drawArrays(gl.POINTS, 0, 1)
+
+      // 初始化着色器函数
+      function initShader() {
+        // 创建顶点、片元着色器对象
+        let vertexShader = gl.createShader(gl.VERTEX_SHADER)
+        let fragmentShader = gl.createShader(gl.FRAGMENT_SHADER)
+
+        // 引入顶点、片元着色器代码
+        gl.shaderSource(vertexShader, vertexShaderSource)
+        gl.shaderSource(fragmentShader, fragmentShaderSource)
+
+        // 编译着色器
+        gl.compileShader(vertexShader)
+        gl.compileShader(fragmentShader)
+
+        // 创建程序对象
+        let program = gl.createProgram()
+
+        // 附着顶点、片元着色器对象到程序对象
+        gl.attachShader(program, vertexShader)
+        gl.attachShader(program, fragmentShader)
+
+        // 链接程序对象
+        gl.linkProgram(program)
+        // 使用这个程序对象
+        gl.useProgram(program)
+
+        // 返回程序
+        return program
+      }
+    </script>
+  </body>
+</html>
